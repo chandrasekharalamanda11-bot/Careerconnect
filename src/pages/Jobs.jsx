@@ -3,116 +3,131 @@ import {
   useContext,
 } from "react";
 
-import { Link }
-from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+} from "react-router-dom";
 
-import { JobContext }
-from "../context/JobContext";
+import {
+  JobContext,
+} from "../context/JobContext";
+
+import {
+  AuthContext,
+} from "../context/AuthContextSetup";
 
 const Jobs = () => {
-  const [search,
-    setSearch] =
+  const [search, setSearch] =
     useState("");
+
+  const navigate =
+    useNavigate();
 
   const {
     applyJob,
-  } =
-    useContext(
-      JobContext
-    );
+  } = useContext(
+    JobContext
+  );
+
+  const {
+    isLoggedIn,
+  } = useContext(
+    AuthContext
+  );
 
   const jobs = [
-  {
-    id: 1,
-    company: "Google",
-    role: "Frontend Developer",
-    location: "Hyderabad",
-  },
-  {
-    id: 2,
-    company: "Microsoft",
-    role: "React Developer",
-    location: "Bangalore",
-  },
-  {
-    id: 3,
-    company: "Amazon",
-    role: "UI Developer",
-    location: "Chennai",
-  },
-  {
-    id: 4,
-    company: "Netflix",
-    role: "Backend Developer",
-    location: "Mumbai",
-  },
-  {
-    id: 5,
-    company: "Infosys",
-    role: "Software Engineer",
-    location: "Pune",
-  },
-  {
-    id: 6,
-    company: "TCS",
-    role: "Frontend Engineer",
-    location: "Hyderabad",
-  },
-  {
-    id: 7,
-    company: "Wipro",
-    role: "React JS Developer",
-    location: "Noida",
-  },
-  {
-    id: 8,
-    company: "Adobe",
-    role: "UI/UX Developer",
-    location: "Bangalore",
-  },
-  {
-    id: 9,
-    company: "Flipkart",
-    role: "Full Stack Developer",
-    location: "Bangalore",
-  },
-  {
-    id: 10,
-    company: "Zoho",
-    role: "Software Developer",
-    location: "Chennai",
-  },
-  {
-    id: 11,
-    company: "Paytm",
-    role: "Frontend Engineer",
-    location: "Delhi",
-  },
-  {
-    id: 12,
-    company: "Accenture",
-    role: "Associate Software Engineer",
-    location: "Hyderabad",
-  },
-  {
-    id: 13,
-    company: "IBM",
-    role: "Cloud Developer",
-    location: "Pune",
-  },
-  {
-    id: 14,
-    company: "Capgemini",
-    role: "Java Developer",
-    location: "Mumbai",
-  },
-  {
-    id: 15,
-    company: "Cognizant",
-    role: "Web Developer",
-    location: "Chennai",
-  },
-];
+    {
+      id: 1,
+      company: "Google",
+      role: "Frontend Developer",
+      location: "Hyderabad",
+    },
+    {
+      id: 2,
+      company: "Microsoft",
+      role: "React Developer",
+      location: "Bangalore",
+    },
+    {
+      id: 3,
+      company: "Amazon",
+      role: "UI Developer",
+      location: "Chennai",
+    },
+    {
+      id: 4,
+      company: "Netflix",
+      role: "Backend Developer",
+      location: "Mumbai",
+    },
+    {
+      id: 5,
+      company: "Infosys",
+      role: "Software Engineer",
+      location: "Pune",
+    },
+    {
+      id: 6,
+      company: "TCS",
+      role: "Frontend Engineer",
+      location: "Hyderabad",
+    },
+    {
+      id: 7,
+      company: "Wipro",
+      role: "React JS Developer",
+      location: "Noida",
+    },
+    {
+      id: 8,
+      company: "Adobe",
+      role: "UI/UX Developer",
+      location: "Bangalore",
+    },
+    {
+      id: 9,
+      company: "Flipkart",
+      role: "Full Stack Developer",
+      location: "Bangalore",
+    },
+    {
+      id: 10,
+      company: "Zoho",
+      role: "Software Developer",
+      location: "Chennai",
+    },
+    {
+      id: 11,
+      company: "Paytm",
+      role: "Frontend Engineer",
+      location: "Delhi",
+    },
+    {
+      id: 12,
+      company: "Accenture",
+      role:
+        "Associate Software Engineer",
+      location: "Hyderabad",
+    },
+    {
+      id: 13,
+      company: "IBM",
+      role: "Cloud Developer",
+      location: "Pune",
+    },
+    {
+      id: 14,
+      company: "Capgemini",
+      role: "Java Developer",
+      location: "Mumbai",
+    },
+    {
+      id: 15,
+      company: "Cognizant",
+      role: "Web Developer",
+      location: "Chennai",
+    },
+  ];
 
   const filteredJobs =
     jobs.filter((job) =>
@@ -122,6 +137,16 @@ const Jobs = () => {
           search.toLowerCase()
         )
     );
+
+  const handleApply =
+    (job) => {
+      if (!isLoggedIn) {
+        navigate("/login");
+        return;
+      }
+
+      applyJob(job);
+    };
 
   return (
     <div className="min-h-screen bg-gray-100 p-10">
@@ -133,7 +158,6 @@ const Jobs = () => {
           <h1 className="text-4xl font-bold text-gray-800">
             Available Jobs
           </h1>
-
         </div>
 
         {/* Right Search */}
@@ -181,7 +205,7 @@ const Jobs = () => {
               <div className="flex gap-3 mt-6">
                 <button
                   onClick={() =>
-                    applyJob(job)
+                    handleApply(job)
                   }
                   className="bg-green-600 text-white px-5 py-2 rounded-xl hover:bg-green-700 transition duration-300 cursor-pointer"
                 >

@@ -5,7 +5,7 @@ import App from "./App";
 import "./index.css";
 
 import AuthProvider from "./context/AuthContext";
-import JobProvider from "./context/JobContext";
+import JobProvider from "./context/JobProvider";
 
 import {
   ToastContainer,

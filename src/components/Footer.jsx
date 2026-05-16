@@ -2,7 +2,21 @@ import {
   Link,
 } from "react-router-dom";
 
+import {
+  useContext,
+} from "react";
+
+import {
+  AuthContext,
+} from "../context/AuthContextSetup";
+
 const Footer = () => {
+  const {
+    isLoggedIn,
+  } = useContext(
+    AuthContext
+  );
+
   return (
     <footer className="bg-slate-950 text-white py-14">
       <div className="max-w-7xl mx-auto px-6">
@@ -11,15 +25,15 @@ const Footer = () => {
 
           {/* Brand */}
           <div>
-            <h1 className="text-4xl font-bold">
-  <span className="text-blue-600">
-    Career
-  </span>
+            <h2 className="text-3xl font-bold">
+              <span className="text-blue-500">
+                Career
+              </span>
 
-  <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
-    Connect
-  </span>
-</h1>
+              <span className="text-indigo-500">
+                Connect
+              </span>
+            </h2>
 
             <p className="text-gray-400 mt-4 leading-7">
               Helping students and
@@ -36,6 +50,7 @@ const Footer = () => {
             </h3>
 
             <div className="flex flex-col gap-3 text-gray-400">
+
               <Link
                 to="/"
                 className="hover:text-blue-400 transition duration-300"
@@ -57,12 +72,24 @@ const Footer = () => {
                 Dashboard
               </Link>
 
-              <Link
-                to="/login"
-                className="hover:text-blue-400 transition duration-300"
-              >
-                Login
-              </Link>
+              {/* Show Login/Register only if NOT logged in */}
+              {!isLoggedIn && (
+                <>
+                  <Link
+                    to="/login"
+                    className="hover:text-blue-400 transition duration-300"
+                  >
+                    Login
+                  </Link>
+
+                  <Link
+                    to="/register"
+                    className="hover:text-blue-400 transition duration-300"
+                  >
+                    Register
+                  </Link>
+                </>
+              )}
             </div>
           </div>
 
@@ -73,6 +100,7 @@ const Footer = () => {
             </h3>
 
             <div className="flex flex-col gap-3 text-gray-400">
+
               <Link
                 to="/about"
                 className="hover:text-blue-400 transition duration-300"

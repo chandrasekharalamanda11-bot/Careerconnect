@@ -41,50 +41,17 @@ const Login = () => {
     setErrors] =
     useState({});
 
-  const passwordRegex =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
-
   const validateField =
     (name, value) => {
       let error = "";
 
-      // Email Validation
       if (
-        name === "email"
+        !value.trim()
       ) {
-        if (
-          !value.trim()
-        ) {
-          error =
-            "*Email is required";
-        } else if (
-          !/\S+@\S+\.\S+/.test(
-            value
-          )
-        ) {
-          error =
-            "*Enter a valid email address";
-        }
-      }
-
-      // Password Validation
-      if (
-        name ===
-        "password"
-      ) {
-        if (
-          !value.trim()
-        ) {
-          error =
-            "*Password is required";
-        } else if (
-          !passwordRegex.test(
-            value
-          )
-        ) {
-          error =
-            "*Use 8+ characters with uppercase, lowercase, number & symbol";
-        }
+        error =
+          name === "email"
+            ? "*Email is required"
+            : "*Password is required";
       }
 
       setErrors(
@@ -99,6 +66,9 @@ const Login = () => {
     (e) => {
       e.preventDefault();
 
+      // Clear old errors
+      setErrors({});
+
       validateField(
         "email",
         email
@@ -109,37 +79,76 @@ const Login = () => {
         password
       );
 
-      const validEmail =
-        /\S+@\S+\.\S+/.test(
-          email
-        );
-
-      const validPassword =
-        passwordRegex.test(
-          password
-        );
-
       if (
-        validEmail &&
-        validPassword
+        !email.trim() ||
+        !password.trim()
       ) {
-        login();
-
-        navigate(
-          "/dashboard"
-        );
+        return;
       }
+
+      const users =
+        JSON.parse(
+          localStorage.getItem(
+            "users"
+          )
+        ) || [];
+
+      const user =
+        users.find(
+          (u) =>
+            u.email ===
+            email
+        );
+
+      // Account not found
+      if (!user) {
+        setErrors({
+          email:
+            "*Account not found",
+        });
+
+        return;
+      }
+
+      // Incorrect password
+      if (
+        user.password !==
+        password
+      ) {
+        setErrors({
+          password:
+            "*Incorrect password",
+        });
+
+        return;
+      }
+
+      // Save current logged-in user
+      localStorage.setItem(
+        "currentUser",
+        JSON.stringify(
+          user
+        )
+      );
+
+      // Login
+      login();
+
+      navigate(
+        "/dashboard"
+      );
     };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex justify-center items-center px-4">
-      <div className="bg-white shadow-2xl rounded-[30px] p-10 w-full max-w-md">
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
+
+      <div className="bg-white shadow-xl rounded-[30px] p-8 w-full max-w-md">
 
         <h1 className="text-4xl font-bold text-center text-blue-600 mb-2">
           Welcome Back
         </h1>
 
-        <p className="text-center text-gray-500 mb-8">
+        <p className="text-center text-gray-500 text-base mb-6">
           Login to continue
         </p>
 
@@ -151,7 +160,7 @@ const Login = () => {
         >
           {/* Email */}
           <div>
-            <label className="block mb-2 font-medium text-gray-700">
+            <label className="block text-lg mb-2">
               Email
             </label>
 
@@ -170,11 +179,7 @@ const Login = () => {
                   e.target.value
                 )
               }
-              className={`w-full p-4 rounded-2xl border outline-none transition ${
-                errors.email
-                  ? "border-red-500 focus:ring-2 focus:ring-red-300"
-                  : "border-gray-300 focus:ring-2 focus:ring-blue-400"
-              }`}
+              className="w-full border border-gray-300 rounded-[18px] px-4 py-3 text-base outline-none focus:border-blue-500"
             />
 
             {errors.email && (
@@ -188,7 +193,7 @@ const Login = () => {
 
           {/* Password */}
           <div>
-            <label className="block mb-2 font-medium text-gray-700">
+            <label className="block text-lg mb-2">
               Password
             </label>
 
@@ -214,14 +219,9 @@ const Login = () => {
                     e.target.value
                   )
                 }
-                className={`w-full p-4 rounded-2xl border outline-none transition pr-12 ${
-                  errors.password
-                    ? "border-red-500 focus:ring-2 focus:ring-red-300"
-                    : "border-gray-300 focus:ring-2 focus:ring-blue-400"
-                }`}
+                className="w-full border border-gray-300 rounded-[18px] px-4 py-3 text-base outline-none focus:border-blue-500"
               />
 
-              {/* Eye Icon */}
               <button
                 type="button"
                 onClick={() =>
@@ -229,12 +229,12 @@ const Login = () => {
                     !showPassword
                   )
                 }
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-blue-600 transition"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 cursor-pointer"
               >
                 {showPassword ? (
-                  <FaEyeSlash size={20} />
+                  <FaEyeSlash />
                 ) : (
-                  <FaEye size={20} />
+                  <FaEye />
                 )}
               </button>
             </div>
@@ -248,13 +248,15 @@ const Login = () => {
             )}
           </div>
 
+          {/* Login Button */}
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-2xl transition duration-300 cursor-pointer font-semibold"
+            className="w-full bg-blue-600 hover:bg-blue-700 transition text-white text-lg font-semibold py-3 rounded-[18px] cursor-pointer"
           >
             Login
           </button>
         </form>
+
       </div>
     </div>
   );

@@ -3,11 +3,18 @@ import {
 } from "react";
 
 import {
+  useNavigate,
+} from "react-router-dom";
+
+import {
   FaEye,
   FaEyeSlash,
 } from "react-icons/fa";
 
 const Register = () => {
+  const navigate =
+    useNavigate();
+
   const [name,
     setName] =
     useState("");
@@ -28,73 +35,35 @@ const Register = () => {
     setErrors] =
     useState({});
 
-  const passwordRegex =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
-
   const validateField =
     (name, value) => {
       let error = "";
 
-      // Name Validation
       if (
-        name === "name"
+        !value.trim()
       ) {
         if (
-          !value.trim()
+          name ===
+          "name"
         ) {
           error =
             "*Name is required";
         }
-      }
 
-      // Email Validation
-      if (
-        name === "email"
-      ) {
         if (
-          !value.trim()
-        ) {
-          error =
-            "*Name is required";
-        }
-      }
-
-      // Email Validation
-      if (
-        name === "email"
-      ) {
-        if (
-          !value.trim()
+          name ===
+          "email"
         ) {
           error =
             "*Email is required";
-        } else if (
-          !/\S+@\S+\.\S+/.test(
-            value
-          )
-        ) {
-          error =
-            "*Enter a valid email address";
         }
-      }
 
-      // Password Validation
-      if (
-        name ===
-        "password"
-      ) {
         if (
-          !value.trim()
+          name ===
+          "password"
         ) {
           error =
             "*Password is required";
-        } else if (
-          !passwordRegex.test(
-            value
-          )
-        ) {
-          error =
-            "*Use 8+ characters with uppercase, lowercase, number & symbol";
         }
       }
 
@@ -125,36 +94,68 @@ const Register = () => {
         password
       );
 
-      const validEmail =
-        /\S+@\S+\.\S+/.test(
-          email
-        );
+      if (
+        !name ||
+        !email ||
+        !password
+      )
+        return;
 
-      const validPassword =
-        passwordRegex.test(
-          password
+      const users =
+        JSON.parse(
+          localStorage.getItem(
+            "users"
+          )
+        ) || [];
+
+      const exists =
+        users.find(
+          (user) =>
+            user.email ===
+            email
         );
 
       if (
-        name &&
-        validEmail &&
-        validPassword
+        exists
       ) {
-        alert(
-          "Registration Successful!"
-        );
+        setErrors({
+          email:
+            "Email already registered",
+        });
+        return;
       }
+
+      const newUser = {
+        name,
+        email,
+        password,
+      };
+
+      users.push(
+        newUser
+      );
+
+      localStorage.setItem(
+        "users",
+        JSON.stringify(
+          users
+        )
+      );
+
+      navigate(
+        "/login"
+      );
     };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex justify-center items-center px-4">
-      <div className="bg-white shadow-2xl rounded-[30px] p-10 w-full max-w-md">
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
+      <div className="bg-white shadow-xl rounded-[30px] p-8 w-full max-w-md">
 
         <h1 className="text-4xl font-bold text-center text-blue-600 mb-2">
           Create Account
         </h1>
 
-        <p className="text-center text-gray-500 mb-8">
+        <p className="text-center text-gray-500 text-base mb-6">
           Register to continue
         </p>
 
@@ -166,7 +167,7 @@ const Register = () => {
         >
           {/* Name */}
           <div>
-            <label className="block mb-2 font-medium text-gray-700">
+            <label className="block text-lg mb-2">
               Full Name
             </label>
 
@@ -185,11 +186,7 @@ const Register = () => {
                   e.target.value
                 )
               }
-              className={`w-full p-4 rounded-2xl border outline-none transition ${
-                errors.name
-                  ? "border-red-500 focus:ring-2 focus:ring-red-300"
-                  : "border-gray-300 focus:ring-2 focus:ring-blue-400"
-              }`}
+              className="w-full border border-gray-300 rounded-[18px] px-4 py-3 text-base outline-none focus:border-blue-500"
             />
 
             {errors.name && (
@@ -203,7 +200,7 @@ const Register = () => {
 
           {/* Email */}
           <div>
-            <label className="block mb-2 font-medium text-gray-700">
+            <label className="block text-lg mb-2">
               Email
             </label>
 
@@ -222,11 +219,7 @@ const Register = () => {
                   e.target.value
                 )
               }
-              className={`w-full p-4 rounded-2xl border outline-none transition ${
-                errors.email
-                  ? "border-red-500 focus:ring-2 focus:ring-red-300"
-                  : "border-gray-300 focus:ring-2 focus:ring-blue-400"
-              }`}
+              className="w-full border border-gray-300 rounded-[18px] px-4 py-3 text-base outline-none focus:border-blue-500"
             />
 
             {errors.email && (
@@ -240,7 +233,7 @@ const Register = () => {
 
           {/* Password */}
           <div>
-            <label className="block mb-2 font-medium text-gray-700">
+            <label className="block text-lg mb-2">
               Password
             </label>
 
@@ -266,11 +259,7 @@ const Register = () => {
                     e.target.value
                   )
                 }
-                className={`w-full p-4 rounded-2xl border outline-none transition pr-12 ${
-                  errors.password
-                    ? "border-red-500 focus:ring-2 focus:ring-red-300"
-                    : "border-gray-300 focus:ring-2 focus:ring-blue-400"
-                }`}
+                className="w-full border border-gray-300 rounded-[18px] px-4 py-3 text-base outline-none focus:border-blue-500"
               />
 
               <button
@@ -280,12 +269,12 @@ const Register = () => {
                     !showPassword
                   )
                 }
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-blue-600 transition"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500"
               >
                 {showPassword ? (
-                  <FaEyeSlash size={20} />
+                  <FaEyeSlash />
                 ) : (
-                  <FaEye size={20} />
+                  <FaEye />
                 )}
               </button>
             </div>
@@ -301,7 +290,7 @@ const Register = () => {
 
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-2xl transition duration-300 cursor-pointer font-semibold"
+            className="w-full bg-blue-600 hover:bg-blue-700 transition text-white text-lg font-semibold py-3 rounded-[18px]"
           >
             Register
           </button>
