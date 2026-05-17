@@ -16,14 +16,25 @@ import {
   AuthContext,
 } from "../context/AuthContextSetup";
 
+import {
+  JobContext,
+} from "../context/JobContext";
+
 const Login = () => {
   const navigate =
     useNavigate();
 
-  const { login } =
-    useContext(
-      AuthContext
-    );
+  const {
+    login,
+  } = useContext(
+    AuthContext
+  );
+
+  const {
+    loadUserData,
+  } = useContext(
+    JobContext
+  );
 
   const [email,
     setEmail] =
@@ -66,7 +77,6 @@ const Login = () => {
     (e) => {
       e.preventDefault();
 
-      // Clear old errors
       setErrors({});
 
       validateField(
@@ -110,7 +120,7 @@ const Login = () => {
         return;
       }
 
-      // Incorrect password
+      // Wrong password
       if (
         user.password !==
         password
@@ -123,7 +133,7 @@ const Login = () => {
         return;
       }
 
-      // Save current logged-in user
+      // Save current user
       localStorage.setItem(
         "currentUser",
         JSON.stringify(
@@ -134,6 +144,10 @@ const Login = () => {
       // Login
       login();
 
+      // Load current user dashboard
+      loadUserData();
+
+      // Navigate
       navigate(
         "/dashboard"
       );
@@ -251,7 +265,7 @@ const Login = () => {
           {/* Login Button */}
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 transition text-white text-lg font-semibold py-3 rounded-[18px] cursor-pointer"
+            className="w-full bg-blue-600 hover:bg-blue-700 transition text-white text-lg font-semibold py-3 rounded-[18px]"
           >
             Login
           </button>
